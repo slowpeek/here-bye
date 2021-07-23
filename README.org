@@ -1,0 +1,73 @@
+* About
+
+This package provides three utility functions for bash scripting:
+
+- here :: Print a message. The core of the package. Two other
+  functions are a few lines wrappers around it.
+- here2 :: Print a message to stderr.
+- bye :: Print a message to stderr and exit.
+
+The functions join their args with a single space to form the
+message.
+
+* here
+
+By default =here= just prints a message. What makes it special is:
+
+- You can make it prefix messages with context. Prefixed message looks
+  like =[prefix] message=. There can be multiple prefixes looking like
+  =[prefix1][prefix2] message=.  Each prefix could be either a static
+  string or a special value =auto=. The latter is replaced with the
+  current execution context in the form of =file:lineno func= or
+  =file:lineno= if not inside a function.
+
+- You can make it print the current call stack.
+
+The optional behavior is contolled with two vars:
+
+- HERE_PREFIX :: Initially it is treated as a comma-separated list so
+  that you can set it with an env var. The package's init code
+  converts it into an array. You can modify the array in your code to
+  change the prefixes on the fly.
+
+- HERE_VERBOSE :: Enable call stack printing with =y= value.
+
+* here2
+
+You can use =here2 message= instead of =here message >&2=. It is a
+one-line wrapper which literally does that.
+
+* bye
+
+By default =bye= prints a message with =here= and exits with code
+=1=. You can set a custom exit code with =BYE_EXIT= var.
+
+Like =here=, =bye= has its own =BYE_PREFIX= and =BYE_VERBOSE=. The
+former is prepended to =HERE_PREFIX= on the fly. The latter, if set to
+=y=, overrides =HERE_PREFIX= on the fly.
+
+With these vars you can for example only make =here= calls issued by
+=bye= to show the =auto= prefix and print the call stack.
+
+* Advanced topics
+
+There is one more config var, an associative array =HERE_WRAP=, which
+is only of interest if you wanted to wrap =here= in a custom
+function. For example you might want to use another name for it, like
+=say=:
+
+#+begin_src bash
+  say () {
+      here "$@"
+  }
+#+end_src
+
+With just that the context in =auto= prefix printed by =say= would be
+the function itself and the top of the call stack would be =say=. To
+make it step over =say= you'd have to add the function to =HERE_WRAP=:
+
+#+begin_src bash
+  HERE_WRAP[say]=t
+#+end_src
+
+By default the array contains =bye= and =here2=.
