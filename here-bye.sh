@@ -40,7 +40,7 @@ here () {
             if [[ $el == auto ]]; then
                 read -r lineno func file < <(caller "$parent")
                 el=$file:$lineno
-                ((lvl <= 2)) || el+=" $func"
+                ((lvl <= 2)) || [[ $func == source ]] || el+=" $func"
             fi
 
             prefix+="[$el]"
@@ -56,7 +56,9 @@ here () {
         while s=$(caller "$n"); do
             read -r lineno func file <<< "$s"
             ((++n))
-            stack+=("$file:$lineno $func")
+            s=$file:$lineno
+            [[ $func == source ]] || s+=" $func"
+            stack+=("$s")
         done
 
         stack[-1]=${stack[-1]% main}
