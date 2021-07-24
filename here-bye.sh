@@ -47,13 +47,18 @@ here () {
         done
 
         ((parent = i-1, lvl -= parent))
-        local n=$parent stack=() lineno func file
+        local n=$parent stack=() lineno func file s
 
         for ((; ctl; ctl--, lvl--, n++)); do
             read -r lineno func file < <(caller "$n") || break
 
-            s=$file:$lineno
+            s=$file:
+            # line#1 most likely means an exit trap was triggered. The
+            # exact line were it happened (for example a violation of
+            # 'set -e') is unknown.
+            [[ $lineno == 1 ]] && s+=\? || s+=$lineno
             ((lvl <= 2)) || [[ $func == source ]] || s+=" $func"
+
             stack+=("$s")
         done
 
