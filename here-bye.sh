@@ -15,54 +15,54 @@ _ () {
 }; _; unset -f _
 
 here () {
-    local _IFS=$IFS parent lvl=${#FUNCNAME[@]}
+    local _IFS=$IFS
     IFS=' '
 
-    # Step over known wrappers.
-    local i=1
-    while [[ -v HERE_WRAP[${FUNCNAME[i]}] ]]; do
-        if ((++i >= lvl)); then
-            # The config seems messed up since everything is a
-            # wrapper. Ignore it.
-            i=1
-            break
-        fi
-    done
-
-    ((parent = i-1, lvl -= parent))
-
-    local lineno func file
-
-    if (($# > 0)); then     # Only print not empty messages.
+    local auto=n
+    if (($# > 0)); then
         local el prefix=
 
         for el in "${HERE_PREFIX[@]}"; do
-            if [[ $el == auto ]]; then
-                read -r lineno func file < <(caller "$parent")
-                el=$file:$lineno
-                ((lvl <= 2)) || [[ $func == source ]] || el+=" $func"
-            fi
-
+            [[ ! $el == auto ]] || auto=y
             prefix+="[$el]"
         done
 
         [[ -z $prefix ]] || prefix+=' '
-
-        printf "%s%s\n" "$prefix" "$*"
     fi
 
-    if [[ ${HERE_VERBOSE-} == y ]]; then
-        local s n=$parent stack=()
-        while s=$(caller "$n"); do
-            read -r lineno func file <<< "$s"
-            ((++n))
+    local ctl=0
+    [[ ${HERE_VERBOSE-} == y ]] && ctl=-1 || [[ $auto == n ]] || ctl=1
+
+    if ((ctl)); then
+        local parent lvl=${#FUNCNAME[@]} i=1
+
+        # Step over known wrappers.
+        while [[ -v HERE_WRAP[${FUNCNAME[i]}] ]]; do
+            if ((++i >= lvl)); then
+                # The config seems messed up since everything is a
+                # wrapper. Ignore it.
+                i=1
+                break
+            fi
+        done
+
+        ((parent = i-1, lvl -= parent))
+        local n=$parent stack=() lineno func file
+
+        for ((; ctl; ctl--, lvl--, n++)); do
+            read -r lineno func file < <(caller "$n") || break
+
             s=$file:$lineno
-            [[ $func == source ]] || s+=" $func"
+            ((lvl <= 2)) || [[ $func == source ]] || s+=" $func"
             stack+=("$s")
         done
 
-        stack[-1]=${stack[-1]% main}
+        [[ $auto == n ]] || prefix=${prefix//'[auto]'/"[${stack[0]}]"}
+    fi
 
+    (($# == 0)) || printf "%s%s\n" "$prefix" "$*"
+
+    if ((ctl < 0)); then
         echo -e '\nCall stack:'
         printf '%s\n' "${stack[@]}"
     fi
