@@ -40,8 +40,8 @@ one-line wrapper which literally does that.
 
 * bye
 
-By default =bye= prints a message with =here= and exits with code
-=1=. You can set a custom exit code with =BYE_EXIT= var.
+By default =bye= prints a message with =here= to stderr and exits with
+code =1=. You can set a custom exit code with =BYE_EXIT= var.
 
 Like =here=, =bye= has its own =BYE_PREFIX= and =BYE_VERBOSE=. The
 former is prepended to =HERE_PREFIX= on the fly. The latter, if set to
