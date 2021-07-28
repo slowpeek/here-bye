@@ -15,9 +15,6 @@ _ () {
 }; _; unset -f _
 
 here () {
-    local _IFS=$IFS
-    IFS=' '
-
     local auto=n
     if (($# > 0)); then
         local el prefix=
@@ -58,14 +55,15 @@ here () {
         [[ $auto == n ]] || prefix=${prefix//'[auto]'/"[${context[0]}]"}
     fi
 
-    (($# == 0)) || printf "%s%s\n" "$prefix" "$*"
+    if (($# > 0)); then
+        local IFS=' '
+        printf "%s%s\n" "$prefix" "$*"
+    fi
 
     if ((ctl < 0)); then
         echo -e '\nContext:'
         printf '%s\n' "${context[@]}"
     fi
-
-    IFS=$_IFS
 }
 
 here2 () {
