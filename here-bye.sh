@@ -34,11 +34,11 @@ here () {
     [[ ${HERE_VERBOSE-} == y ]] && ctl=-1 || [[ $auto == n ]] || ctl=1
 
     if ((ctl)); then
-        local parent lvl=${#FUNCNAME[@]} i=1
+        local n=${#FUNCNAME[@]} i=1
 
         # Step over known wrappers.
         while [[ -v HERE_WRAP[${FUNCNAME[i]}] ]]; do
-            if ((++i >= lvl)); then
+            if ((++i >= n)); then
                 # The config seems messed up since everything is a
                 # wrapper. Ignore it.
                 i=1
@@ -46,14 +46,12 @@ here () {
             fi
         done
 
-        ((parent = i-1, lvl -= parent))
-        local n=$parent stack=() lineno func file s
+        local stack=() s
 
-        for ((; ctl; ctl--, lvl--, n++)); do
-            read -r lineno func file < <(caller "$n") || break
-
-            s=$file:$lineno
-            ((lvl <= 2)) || [[ $func == source ]] || s+=" $func"
+        for ((; ctl && i<n; ctl--, i++)); do
+            s=${BASH_SOURCE[i]}:${BASH_LINENO[i-1]}
+            ((i >= n-1)) || [[ ${FUNCNAME[i]} == source ]] ||
+                s+=" ${FUNCNAME[i]}"
             stack+=("$s")
         done
 
