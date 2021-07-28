@@ -52,13 +52,8 @@ here () {
         for ((; ctl; ctl--, lvl--, n++)); do
             read -r lineno func file < <(caller "$n") || break
 
-            s=$file:
-            # line#1 most likely means an exit trap was triggered. The
-            # exact line were it happened (for example a violation of
-            # 'set -e') is unknown.
-            [[ $lineno == 1 ]] && s+=\? || s+=$lineno
+            s=$file:$lineno
             ((lvl <= 2)) || [[ $func == source ]] || s+=" $func"
-
             stack+=("$s")
         done
 
