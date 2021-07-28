@@ -46,23 +46,23 @@ here () {
             fi
         done
 
-        local stack=() s
+        local context=() s
 
         for ((; ctl && i<n; ctl--, i++)); do
             s=${BASH_SOURCE[i]}:${BASH_LINENO[i-1]}
             ((i >= n-1)) || [[ ${FUNCNAME[i]} == source ]] ||
                 s+=" ${FUNCNAME[i]}"
-            stack+=("$s")
+            context+=("$s")
         done
 
-        [[ $auto == n ]] || prefix=${prefix//'[auto]'/"[${stack[0]}]"}
+        [[ $auto == n ]] || prefix=${prefix//'[auto]'/"[${context[0]}]"}
     fi
 
     (($# == 0)) || printf "%s%s\n" "$prefix" "$*"
 
     if ((ctl < 0)); then
-        echo -e '\nCall stack:'
-        printf '%s\n' "${stack[@]}"
+        echo -e '\nContext:'
+        printf '%s\n' "${context[@]}"
     fi
 
     IFS=$_IFS
