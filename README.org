@@ -4,11 +4,16 @@ This package provides three utility functions for bash scripting:
 
 - here :: Print a message. The core of the package. Two other
   functions are a few lines wrappers around it.
-- here2 :: Print a message to stderr.
-- bye :: Print a message to stderr and exit.
+- here2 :: Print a message with =here= to stderr.
+- bye :: Print a message with =here= to stderr and exit.
 
 The functions join their args with a single space to form the
 message.
+
+The package comes in three editions: =full=, =mini= and =micro=. They
+differ in =here='s capabilities, check out the feature matrix
+below. Depending on your use case you might want to use light ones at
+least in releases.
 
 * here
 
@@ -33,6 +38,13 @@ The optional behavior is contolled with two vars:
 
 - HERE_VERBOSE :: Enable execution context printing with =y= value.
 
+** Feature matrix
+
+|                   | full              | mini   | micro |
+|-------------------+-------------------+--------+-------|
+| prefix            | static and =auto= | static | no    |
+| execution context | yes               | no     | no    |
+
 * here2
 
 You can use =here2 message= instead of =here message >&2=. It is a
@@ -49,6 +61,8 @@ former is prepended to =HERE_PREFIX= on the fly. The latter, if set to
 
 With these vars you can for example only make =here= calls issued by
 =bye= to show the =auto= prefix and print the context.
+
+Light editions have the same limitations as for =here=.
 
 * Advanced topics
 
