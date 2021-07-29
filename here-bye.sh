@@ -61,8 +61,9 @@ here () {
     fi
 
     if ((ctl < 0)); then
-        echo -e '\nContext:'
+        echo -e '\n--- context ---'
         printf '%s\n' "${context[@]}"
+        echo -e '---\n'
     fi
 }
 
