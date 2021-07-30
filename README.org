@@ -19,6 +19,9 @@ It is probably the most common use scenario of =here-bye= package to
 only take advantage of its optionally verbose =bye= function, the exit
 function on steroids, configured with env vars.
 
+*Important*: this package is not tailored for traps. Use [[https://gist.github.com/slowpeek/7e2731b620d558f44841da6772743d38][locate-exit]]
+to verbosely trap =EXIT= and =ERR=.
+
 * here
 
 By default =here= just prints a message. What makes it special is:
@@ -174,3 +177,10 @@ you'd have to add the function to =HERE_WRAP=:
 #+end_src
 
 By default the array contains =bye= and =here2=.
+
+* History
+
+The project originally started with a [[https://gist.github.com/slowpeek/6127166369d8abd230c30c20cc6a9152][gist]] advertised in [[https://www.reddit.com/r/bash/][/r/bash]] as
+the [[https://www.reddit.com/r/bash/comments/oku0vj/exit_function_on_steroids/][exit function on steroids]]. Multiple people asked me for a context
+printer not tied to exit. I reworked the original code to separate the
+printing stuff, thats how =here-bye= emerged.
