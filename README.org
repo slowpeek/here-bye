@@ -97,6 +97,13 @@ custom exit codes.
   BYE_EXIT=2 bye 'a message printed by "bye"'
 #+end_src
 
+Result:
+
+#+begin_example
+  a message printed by "here"
+  a message printed by "bye"
+#+end_example
+
 ** mini
 
 =here= supports static prefixes.
@@ -138,6 +145,20 @@ custom exit codes.
   f2
 #+end_src
 
+Result:
+
+#+begin_example
+  the following messages are prefixed with [config]
+  [config] until "config" is popped off the HERE_PREFIX array
+  [config] a message printed by "bye" would be prefixed as well
+  [config][files] this message has one more prefix, [files]
+  [config] out of "files" subsection
+  out of "config" section
+  hello from f2
+  hello from f1
+  cya later
+#+end_example
+
 A useful application of prefixes, even if you dont use them explicitly
 in the code, could be filtering the script's output for any =here=
 messages:
@@ -153,6 +174,27 @@ messages:
 Modify the =source= line to include =here-bye.sh= instead of the
 =mini= edition in the above example and run it with env vars
 ~HERE_PREFIX=auto BYE_CONTEXT=y~ to unleash the power.
+
+Result:
+
+#+begin_example
+  [./demo.sh:15] the following messages are prefixed with [config]
+  [./demo.sh:19][config] until "config" is popped off the HERE_PREFIX array
+  [./demo.sh:20][config] a message printed by "bye" would be prefixed as well
+  [./demo.sh:24][config][files] this message has one more prefix, [files]
+  [./demo.sh:28][config] out of "files" subsection
+  [./demo.sh:32] out of "config" section
+  [./demo.sh:11 f2] hello from f2
+  [./demo.sh:6 f1] hello from f1
+  [./demo.sh:7 f1] cya later
+
+  --- context ---
+  ./demo.sh:7 f1
+  ./demo.sh:12 f2
+  ./demo.sh:34
+  ---
+
+#+end_example
 
 * Advanced topics
 
