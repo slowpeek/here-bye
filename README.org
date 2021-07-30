@@ -15,6 +15,10 @@ differ in =here='s capabilities, check out the feature matrix
 below. Depending on your use case you might want to use light ones at
 least in releases.
 
+It is probably the most common use scenario of =here-bye= package to
+only take advantage of its optionally verbose =bye= function, the exit
+function on steroids, configured with env vars.
+
 * here
 
 By default =here= just prints a message. What makes it special is:
@@ -63,6 +67,92 @@ With these vars you can for example only make =here= calls issued by
 =bye= to show the =auto= prefix and print the context.
 
 Light editions have the same limitations as for =here=.
+
+* Examples
+
+** micro
+
+=here= is a dumb printer, no prefixes, no context. =bye= supports
+custom exit codes.
+
+#+begin_src bash
+  #!/usr/bin/env bash
+
+  source here-bye.micro.sh
+
+  here 'a message printed by "here"'
+
+  BYE_EXIT=2 bye 'a message printed by "bye"'
+#+end_src
+
+** mini
+
+=here= supports static prefixes.
+
+Treat =HERE_PREFIX= as a stack:
+
+- if you need to add a prefix, do it as ~HERE_PREFIX+=(prefix)~
+- if you need to remove a previously added prefix, do it as ~unset -v
+  'HERE_PREFIX[-1]'~
+- if you need to 'close' a prefix and 'open' another one right away,
+  change the top prefix with ~HERE_PREFIX[-1]=prefix~
+
+Do not assign directly like ~HERE_PREFIX=(prefix)~, it could discard
+prefixes possibly set on script start with env vars. The same applies
+to the =BYE_PREFIX= array.
+
+#+begin_src bash
+  #!/usr/bin/env bash
+
+  source here-bye.mini.sh
+
+  f1 () {
+      here 'hello from f1'
+      bye 'cya later'
+  }
+
+  f2 () {
+      here 'hello from f2'
+      f1
+  }
+
+  here 'the following messages are prefixed with [config]'
+
+  HERE_PREFIX+=(config)
+
+  here 'until "config" is popped off the HERE_PREFIX array'
+  here 'a message printed by "bye" would be prefixed as well'
+
+  HERE_PREFIX+=(files)
+
+  here 'this message has one more prefix, [files]'
+
+  unset -v 'HERE_PREFIX[-1]'
+
+  here 'out of "files" subsection'
+
+  unset -v 'HERE_PREFIX[-1]'
+
+  here 'out of "config" section'
+
+  f2
+#+end_src
+
+A useful application of prefixes, even if you dont use them explicitly
+in the code, could be filtering the script's output for any =here=
+messages:
+
+#+begin_src bash
+  HERE_PREFIX=token ./script.sh 2>&1 | grep token
+#+end_src
+
+** full
+
+=here= supports =auto= prefix and context.
+
+Modify the =source= line to include =here-bye.sh= instead of the
+=mini= edition in the above example and run it with env vars
+~HERE_PREFIX=auto BYE_VERBOSE=y~ to unleash the power.
 
 * Advanced topics
 
