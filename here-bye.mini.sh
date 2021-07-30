@@ -7,8 +7,6 @@
 _ () {
     IFS=, read -r -a HERE_PREFIX <<< "${HERE_PREFIX-}"
     IFS=, read -r -a BYE_PREFIX <<< "${BYE_PREFIX-}"
-
-    declare -g +x HERE_PREFIX BYE_PREFIX
 }; _; unset -f _
 
 here () {
