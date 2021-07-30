@@ -28,7 +28,7 @@ here () {
     fi
 
     local ctl=0
-    [[ ${HERE_VERBOSE-} == y ]] && ctl=-1 || [[ $auto == n ]] || ctl=1
+    [[ ${HERE_CONTEXT-} == y ]] && ctl=-1 || [[ $auto == n ]] || ctl=1
 
     if ((ctl)); then
         local n=${#FUNCNAME[@]} i=1
@@ -72,7 +72,7 @@ here2 () {
 }
 
 bye () {
-    [[ ! ${BYE_VERBOSE-} == y ]] || HERE_VERBOSE=y
+    [[ ! ${BYE_CONTEXT-} == y ]] || HERE_CONTEXT=y
     HERE_PREFIX=("${BYE_PREFIX[@]}" "${HERE_PREFIX[@]}")
 
     here "$@" >&2

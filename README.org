@@ -52,7 +52,7 @@ The optional behavior is contolled with two vars:
   Do not assign directly like ~HERE_PREFIX=(prefix)~, it could discard
   prefixes possibly set on script start with env vars.
 
-- HERE_VERBOSE :: Enable execution context printing with =y= value.
+- HERE_CONTEXT :: Enable execution context printing with =y= value.
 
 ** Feature matrix
 
@@ -71,7 +71,7 @@ one-line wrapper which literally does that.
 By default =bye= prints a message with =here= to stderr and exits with
 code =1=. You can set a custom exit code with =BYE_EXIT= var.
 
-Like =here=, =bye= has its own =BYE_PREFIX= and =BYE_VERBOSE=. The
+Like =here=, =bye= has its own =BYE_PREFIX= and =BYE_CONTEXT=. The
 former is prepended to =HERE_PREFIX= on the fly. The latter, if set to
 =y=, overrides =HERE_PREFIX= on the fly.
 
@@ -152,7 +152,7 @@ messages:
 
 Modify the =source= line to include =here-bye.sh= instead of the
 =mini= edition in the above example and run it with env vars
-~HERE_PREFIX=auto BYE_VERBOSE=y~ to unleash the power.
+~HERE_PREFIX=auto BYE_CONTEXT=y~ to unleash the power.
 
 * Advanced topics
 
