@@ -38,7 +38,16 @@ The optional behavior is contolled with two vars:
 - HERE_PREFIX :: Initially it is treated as a comma-separated list so
   that you can set it with an env var. The package's init code
   converts it into an array. You can modify the array in your code to
-  change the prefixes on the fly.
+  change the prefixes on the fly. Treat it as a stack:
+
+  - if you need to add a prefix, do it as ~HERE_PREFIX+=(prefix)~
+  - if you need to remove a previously added prefix, do it as ~unset
+    -v HERE_PREFIX[-1]~
+  - if you need to 'close' a prefix and 'open' another one right away,
+    change the top prefix with ~HERE_PREFIX[-1]=prefix~
+
+  Do not assign directly like ~HERE_PREFIX=(prefix)~, it could discard
+  prefixes possibly set on script start with env vars.
 
 - HERE_VERBOSE :: Enable execution context printing with =y= value.
 
@@ -88,18 +97,6 @@ custom exit codes.
 ** mini
 
 =here= supports static prefixes.
-
-Treat =HERE_PREFIX= as a stack:
-
-- if you need to add a prefix, do it as ~HERE_PREFIX+=(prefix)~
-- if you need to remove a previously added prefix, do it as ~unset -v
-  'HERE_PREFIX[-1]'~
-- if you need to 'close' a prefix and 'open' another one right away,
-  change the top prefix with ~HERE_PREFIX[-1]=prefix~
-
-Do not assign directly like ~HERE_PREFIX=(prefix)~, it could discard
-prefixes possibly set on script start with env vars. The same applies
-to the =BYE_PREFIX= array.
 
 #+begin_src bash
   #!/usr/bin/env bash
