@@ -26,7 +26,12 @@ here2 () {
 }
 
 bye () {
-    HERE_PREFIX=("${BYE_PREFIX[@]}" "${HERE_PREFIX[@]}")
+    if [[ -v BYE_PREFIX ]]; then
+        HERE_PREFIX=(
+            "${BYE_PREFIX[@]}"
+            ${HERE_PREFIX[@]+"${HERE_PREFIX[@]}"}
+        )
+    fi
 
     here "$@" >&2
     exit "${BYE_EXIT:-1}"

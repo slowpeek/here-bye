@@ -17,7 +17,7 @@ here () {
     if (($# > 0)); then
         local el prefix=
 
-        for el in "${HERE_PREFIX[@]}"; do
+        for el in ${HERE_PREFIX[@]+"${HERE_PREFIX[@]}"}; do
             [[ ! $el == auto ]] || auto=y
             prefix+="[$el]"
         done
@@ -71,7 +71,13 @@ here2 () {
 
 bye () {
     [[ ! ${BYE_CONTEXT-} == y ]] || HERE_CONTEXT=y
-    HERE_PREFIX=("${BYE_PREFIX[@]}" "${HERE_PREFIX[@]}")
+
+    if [[ -v BYE_PREFIX ]]; then
+        HERE_PREFIX=(
+            "${BYE_PREFIX[@]}"
+            ${HERE_PREFIX[@]+"${HERE_PREFIX[@]}"}
+        )
+    fi
 
     here "$@" >&2
     exit "${BYE_EXIT:-1}"
