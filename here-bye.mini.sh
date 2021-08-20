@@ -5,9 +5,11 @@
 # Homepage: https://github.com/slowpeek/here-bye
 
 _ () {
+    unset -f _
+
     IFS=, read -r -a HERE_PREFIX <<< "${HERE_PREFIX-}"
     IFS=, read -r -a BYE_PREFIX <<< "${BYE_PREFIX-}"
-}; _; unset -f _
+}; _
 
 here () {
     if (($# > 0)); then
